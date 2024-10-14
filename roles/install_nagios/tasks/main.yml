@@ -1,21 +1,32 @@
 ---
-  - name: download and uncompress
-    shell: cd /tmp;rm nagios*.tar.gz;wget -O nagios.tar.gz --no-check-certificate https://assets.nagios.com/downloads/nagioscore/releases/nagios-4.4.5.tar.gz;tar -zxf nagios.tar.gz;mv nagios-4.4.5 nagios
-    become: true
+- name: Install EPEL repo (CentOS)
+  dnf:
+    name: epel-release
+    state: latest
+  when: ansible_distribution == "CentOS"
+ 
+- name: Install nagios (CentOS)
+  dnf:
+    name: nagios
+    state: latest
+  when: ansible_distribution == "CentOS"
 
-  - name: configure and make all
-    shell: cd /tmp/nagios;./configure --with-mail=/usr/sbin/sendmail --with-httpd-conf=/etc/apache2/sites-enabled;make all;
-    become: true
+- name: Install nagios3 (Ubuntu)
+  apt:
+    name: nagios3-core
+    state: latest
+  when: ansible_distribution == "Ubuntu"
 
-  - name: configure and make all
-    shell: cd /tmp/nagios;./configure --with-mail=/usr/sbin/sendmail --with-httpd-conf=/etc/apache2/sites-enabled;make all;
-    become: true
+- name: Start and Enable Nagios (CentOS)
+  service:
+    name: nagios
+    state: restarted
+    enabled: true
+  when: ansible_distribution == "CentOS"
 
-  - name: create nagios user homedir
-    file:
-      path: /home/nagios
-      state: directory
-      owner: nagios
-      group: nagios
-      mode: 0775
-    become: true
+- name: Start and Enable Nagios (Ubuntu)
+  service:
+    name: nagios3
+    state: restarted
+    enabled: true
+  when: ansible_distribution == "Ubuntu"
