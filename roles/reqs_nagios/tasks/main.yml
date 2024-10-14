@@ -1,0 +1,41 @@
+---
+- name: Install nagios requirements (Ubuntu)
+  apt:
+    name:
+      - autoconf
+      - gcc
+      - libc6
+      - make
+      - wget
+      - unzip
+      - libssl-dev
+      - apache2
+      - php
+      - libapache2-mod-php7.2
+      - libgd-dev
+      - build-essential
+    state: latest
+    force: true
+    update_cache: true
+  become: true
+  when: ansible_distribution == "Ubuntu"
+
+- name: Install nagios requirements (CentOS)
+  dnf:
+    name:
+      - gcc
+      - glibc
+      - glibc-common
+      - wget
+      - unzip
+      - httpd
+      - php
+      - gd
+      - gd-devel
+      - perl
+      - postfix
+      - openssl-devel
+    state: latest
+  become: true
+  when: ansible_distribution == "CentOS"
+
